@@ -17,6 +17,4 @@ int main() {
 
     auto z = 5*3;
     cout << z << " if this equals 15 then hallelujah\n";
-
-    
 }
