@@ -1,2 +1,38 @@
-/build
-/.vscode
+# ---- Editors / OS ----
+/.vscode/*
+!/.vscode/tasks.json
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# ---- Audio prototype (C++) ----
+/audio-prototype/build/
+*.exe
+*.out
+*.o
+
+# ---- Backend (Java / Maven) ----
+/backend/target/
+/backend/.mvn/wrapper/maven-wrapper.jar
+*.log
+
+# ---- Mobile (Flutter / Dart) ----
+/mobile/.dart_tool/
+/mobile/.flutter-plugins
+/mobile/.flutter-plugins-dependencies
+/mobile/build/
+/mobile/coverage/
+/mobile/android/.gradle/
+/mobile/android/local.properties
+/mobile/android/app/*.jks
+/mobile/android/key.properties
+/mobile/ios/Pods/
+/mobile/ios/.symlinks/
+/mobile/ios/Flutter/Generated.xcconfig
+/mobile/ios/Flutter/flutter_export_environment.sh
+
+# ---- Secrets: never commit these ----
+.env
+*.PublishSettings
+*.publishsettings

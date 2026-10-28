@@ -1,0 +1,102 @@
+# Runs on every push and pull request that touches the Flutter app.
+# Mobile pipeline from the proposal: shared unit/widget tests, then an Android build.
+# iOS builds need a macOS runner and Apple signing, so they are added later.
+name: Mobile CI
+
+on:
+  push:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile-ci.yml"
+  pull_request:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.47.8" # everyone should use the same version locally
+
+jobs:
+  test:
+    name: Analyze and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - run: flutter pub get
+
+      # Fails if code isn't formatted; prints the diff so you can see what to fix.
+      # Fix locally with: dart format lib test
+      - name: Check formatting
+        run: |
+          dart format lib test
+          git diff --exit-code -- lib test
+
+      - name: Static analysis (lints)
+        run: flutter analyze
+
+      - name: Unit and widget tests
+        run: flutter test --coverage
+
+  build-android:
+    name: Build Android APK
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v5
+
+      # The android/ folder is created by running `flutter create .` inside mobile/.
+      # Until it is committed, this job skips the build instead of failing.
+      - name: Check for android/ project
+        id: android
+        run: |
+          if [ -d android ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::mobile/android/ is not committed yet; skipping the APK build."
+          fi
+
+      - uses: actions/setup-java@v5
+        if: steps.android.outputs.present == 'true'
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        if: steps.android.outputs.present == 'true'
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Build debug APK
+        if: steps.android.outputs.present == 'true'
+        run: flutter build apk --debug
+
+      - name: Upload APK for the team
+        if: steps.android.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: music-app-debug-apk
+          path: mobile/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
