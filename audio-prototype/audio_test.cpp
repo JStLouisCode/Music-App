@@ -5,7 +5,8 @@ Date: October 11, 2026
 This is for testing if I can get a microphone input.
 
 To run, copy this command into the terminal
-g++ audio_test.cpp -o build/audio_test
+g++ audio-prototype/audio_test.cpp -o build/audio_test
+./build/audio_test
 */
 
 #include <iostream>
