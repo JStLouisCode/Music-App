@@ -20,7 +20,7 @@ cd audio-prototype
 gcc patest_read_record.c libs/libportaudio.a -lrt -lm -lasound -ljack -pthread -o build/mic_test
 ./build/mic_test
 It should record for 5 seconds, then playback the recording
-If error, please inform Nam about it
+If error, please inform Nam about it 
 */
 
 #include <iostream>
