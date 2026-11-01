@@ -18,5 +18,5 @@ target_sources(PortAudio
   PUBLIC
     FILE_SET HEADERS
     FILES
-      portaudio.h
+      libs/portaudio.h
 )
