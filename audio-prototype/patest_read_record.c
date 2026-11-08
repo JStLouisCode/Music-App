@@ -56,7 +56,7 @@
 #define DITHER_FLAG     (0) /**/
 
 /* Select sample format. */
-#if 1
+#if 0
 #define PA_SAMPLE_TYPE  paFloat32
 typedef float SAMPLE;
 #define SAMPLE_SILENCE  (0.0f)
@@ -175,10 +175,10 @@ int main(void)
     }
 */
     /* Write recorded data to a file. */
-#if 0
+#if 1
     {
         FILE  *fid;
-        fid = fopen("recorded.raw", "wb");
+        fid = fopen("build/recorded.raw", "wb");
         if( fid == NULL )
         {
             printf("Could not open file.");
